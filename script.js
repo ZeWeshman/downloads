@@ -14,8 +14,8 @@ home.innerHTML = `
     <button onclick="updateURLAndLoadScript('coffee.js')">Coffee Machine</button>
     <button onclick="updateURLAndLoadScript('ttt.js')">Tic Tac Toe</button>
     <button onclick="updateURLAndLoadScript('hm.js')">Hangman</button>
+    <button onclick="loadHTMLPage('turtle/index.html')" disabled>Turtle</button>
 	`;
-//    <button onclick="loadHTMLPage('turtle/index.html')">Turtle</button>
 
 function updateURLAndLoadScript(scriptName) {
 	const url = new URL(window.location);
