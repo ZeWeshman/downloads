@@ -96,13 +96,13 @@ function selectCoffee(type) {
 	coffeeType = type;
 	switch (type) {
 		case 'court':
-			price = 0.2;
+			price = 3;
 			break;
 		case 'long':
-			price = 0.5;
+			price = 5;
 			break;
 		case 'cappuccino':
-			price = 0.7;
+			price = 4;
 			break;
 	}
 	document.querySelector('.display').textContent =
@@ -195,7 +195,7 @@ async function confirmPayment() {
 		'Veuillez patienter pendant la vérification du paiement...';
 	disableButtons();
 	let verificationTime = 0; // 2 seconds base verification time
-	const currentPrice = price + (milk ? 0.5 : 0) + sugar * 0.1;
+	const currentPrice = price + (milk ? 0.90 : 0) + sugar * 0.20;
 	if (currentPrice >= 10) {
 		const multiplesOfTen = Math.floor(currentPrice / 10);
 		verificationTime += multiplesOfTen * 2000; // Add 2 seconds for each multiple of 10
