@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:active {
+            background-color: #004085;
+        }
+
+        .result-container {
+            position: relative;
+            display: inline-block;
+            width: calc(100% - 20px);
+            /* Ensure consistent padding on both sides */
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #555;
+            background-color: #f1f1f1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: auto;
+            box-sizing: border-box;
+            /* Include padding and border in width calculation */
+        }
+
+        p#result {
+            margin: 0;
+            word-wrap: break-word;
+            padding-right: 60px;
+            /* Add padding to prevent overlap with the copy button */
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 7.5px;
+            right: 10px;
+            /* Adjusted for consistent alignment */
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+        }
+
+        .copy-button:hover {
+            background-color: #0056b3;
+        }
+
+        .copy-button:active {
+            background-color: #004085;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.2em;
+            }
+
+            button {
+                font-size: 0.9em;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+    <title>Racourciceur de lien YouTube</title>
+    <meta name="description" content="Racourciceur de lien YouTube">
+    <meta name="keywords" content="Racourciceur, lien, YouTube, vidéo, URL">
+    <script>
+        function shorten() {
+            const input = document.getElementById("input").value;
+            const result = document.getElementById("result");
+            try {
+                let url;
+                if (!input.startsWith("http://") && !input.startsWith("https://")) {
+                    url = new URL("https://" + input);
+                } else {
+                    url = new URL(input);
+                }
+                const id = url.searchParams.get("v");
+                const t = url.searchParams.get("t");
+                if (id) {
+                    let shortUrl = "https://youtu.be/" + id;
+                    if (t) {
+                        shortUrl += "?t=" + encodeURIComponent(t);
+                    }
+                    result.innerHTML = shortUrl;
+                    alert("Lien racourci : " + shortUrl);
+                } else if (input.startsWith("youtu.be/") || input.startsWith("https://youtu.be/")) {
+                    const baseUrl = input.split("?")[0];
+                    let cleanUrl = baseUrl;
+                    if (t) {
+                        cleanUrl += "?t=" + encodeURIComponent(t);
+                    }
+                    result.innerHTML = cleanUrl;
+                    alert("Lien nettoyé : " + cleanUrl);
+                } else if (url.hostname.includes("music.youtube.com")) {
+                    if (id) {
+                        let cleanMusicUrl = "https://music.youtube.com/watch?v=" + id;
+                        if (t) {
+                            cleanMusicUrl += "&t=" + encodeURIComponent(t);
+                        }
+                        result.innerHTML = cleanMusicUrl;
+                        alert("Lien nettoyé : " + cleanMusicUrl);
+                    } else {
+                        alert("Veuillez entrer un lien YouTube Music valide.");
+                    }
+                } else {
+                    alert("Veuillez entrer un lien YouTube valide.");
+                }
+            } catch (e) {
+                alert("Veuillez entrer un lien YouTube valide.");
+            }
+        }
+
+        function validateInput() {
+            const input = document.getElementById("input").value;
+            const error = document.getElementById("error");
+            try {
+                const url = new URL(input.startsWith("http") ? input : "https://" + input);
+                if (url.hostname.includes("youtube.com") || url.hostname.includes("youtu.be")) {
+                    error.textContent = "";
+                    return true;
+                } else {
+                    error.textContent = "Veuillez entrer un lien YouTube valide.";
+                    return false;
+                }
+            } catch {
+                error.textContent = "Veuillez entrer un lien YouTube valide.";
+                return false;
+            }
+        }
+
+        function copyToClipboard() {
+            const result = document.getElementById("result").textContent;
+            if (result) {
+                navigator.clipboard.writeText(result).then(() => {
+                    alert("Lien copié dans le presse-papier !");
+                });
+            } else {
+                alert("Aucun lien à copier.");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputField = document.getElementById("input");
+            const submitButton = document.getElementById("submit");
+            const copyButton = document.getElementById("copy");
+
+            inputField.addEventListener("input", validateInput);
+            submitButton.addEventListener("click", function (event) {
+                if (validateInput()) {
+                    shorten();
+                }
+            });
+
+            inputField.addEventListener("keypress", function (event) {
+                if (event.key === "Enter" && validateInput()) {
+                    shorten();
+                }
+            });
+
+            copyButton.addEventListener("click", copyToClipboard);
+        });
+    </script>
+</head>
+
+
+<body>
+    <div class="container">
+        <h1>Racourciceur de lien YouTube</h1>
+        <input placeholder="Lien YouTube" id="input" type="text">
+        <div id="error" class="error"></div>
+        <button id="submit">Racourcir</button>
+        <div class="result-container">
+            <p id="result">Lien racourci ici</p>
+            <button id="copy" class="copy-button">Copier</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
